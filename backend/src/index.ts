@@ -24,7 +24,7 @@ const publicDir = path.join(process.cwd(), "public");
 if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir));
 
-  app.get("*", (req, res, next) => {
+  app.get("/{*any}", (req, res, next) => {
     const isGetOrHead = req.method === "GET" || req.method === "HEAD";
     const isApiOrWebhook =
       req.path.startsWith("/api") || req.path.startsWith("/webhooks");
