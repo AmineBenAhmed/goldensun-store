@@ -13,7 +13,7 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
   try {
     //Webhook verification needs a shared secret; without it we cannot trust incoming requests
     console.log("webhook", env.CLERK_WEBHOOK_SECRET)
-    if (env.CLERK_WEBHOOK_SECRET) {
+    if (!env.CLERK_WEBHOOK_SECRET) {
       res.status(503).send("Webhook secret not provided");
       return;
     };
