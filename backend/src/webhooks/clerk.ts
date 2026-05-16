@@ -18,6 +18,8 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
       return;
     };
 
+    console.log('body', req.body)
+
     //Clerk's verifier expects a web request with the raw body; Express my give a buffer or string
     const payload = req.body instanceof Buffer ? req.body.toString("utf8") : String(req.body);
     console.log('payload', payload)
