@@ -12,6 +12,7 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
 
   try {
     //Webhook verification needs a shared secret; without it we cannot trust incoming requests
+    console.log("webhook", env.CLERK_WEBHOOK_SECRET)
     if (env.CLERK_WEBHOOK_SECRET) {
       res.status(503).send("Webhook secret not provided");
       return;
@@ -19,6 +20,7 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
 
     //Clerk's verifier expects a web request with the raw body; Express my give a buffer or string
     const payload = req.body instanceof Buffer ? req.body.toString("utf8") : String(req.body);
+    console.log('payload', payload)
 
     const request = new Request("http://internal/webhooks/clerk", {
       method: "POST",
@@ -28,7 +30,7 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
 
     //Throws if signature is wrong or body tampered with; only then we trust event
     const event = await verifyWebhook(request, { signingSecret: env.CLERK_WEBHOOK_SECRET });
-
+    console.log('event', event)
     if (event.type === "user.created" || event.type === "user.updated") {
       const u = event.data;
 
@@ -40,6 +42,7 @@ export async function clerkWebhookHandler(req: Request, res: Response) {
         [u.first_name, u.last_name].filter(Boolean).join(" ") || u.username || null;
 
       const role = parseRole(u.public_metadata?.role)
+      console.log({ role, displayName, email })
 
       await db.insert(users).values({
         clerkUserId: u.id,

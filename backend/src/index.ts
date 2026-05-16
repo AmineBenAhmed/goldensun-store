@@ -13,6 +13,7 @@ const app = express();
 
 const rawJson = express.raw({ type: "application/json", limit: "1mb" });
 app.post("/webhooks/clerk", rawJson, (req, res) => {
+  console.log("webhook function")
   void clerkWebhookHandler(req, res);
 });
 
